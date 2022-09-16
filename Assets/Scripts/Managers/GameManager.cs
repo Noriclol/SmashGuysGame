@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    //references/prefabs;
     public LevelHandler level;
     public GameObject PlayerPrefab;
     public GameObject CameraPrefab;
@@ -14,21 +15,12 @@ public class GameManager : MonoBehaviour
     public List<int> UnusedSpawnPoints;
     public List<GameObject> SpawnedPlayers;
     public PlayerSelectCount players;
+
+    public List<Color> PlayerColors;
     
-    //Camera Configurations
-    
-    //2 Players
-    
-    
-    //3 Players
-    
-    //4 Players
-    
-    
-    
-    
-    
-    
+
+
+    //Onstart
     public void PlayerSetup(PlayerSelectCount players)
     {
         switch (players)
@@ -85,16 +77,20 @@ public class GameManager : MonoBehaviour
             switch (i)
             {
                 case 0:
-                    CameraSetup(config.c1, SpawnedPlayers[i]);
+                    var cam0 = CameraSetup(config.c1, SpawnedPlayers[i]);
+                    cam0.SetBorderColor(PlayerColors[i]);
                     break;
                 case 1:
-                    CameraSetup(config.c2, SpawnedPlayers[i]);
+                    var cam1 = CameraSetup(config.c2, SpawnedPlayers[i]);
+                    cam1.SetBorderColor(PlayerColors[i]);
                     break;
                 case 2:
-                    CameraSetup(config.c3, SpawnedPlayers[i]);
+                    var cam2 = CameraSetup(config.c3, SpawnedPlayers[i]);
+                    cam2.SetBorderColor(PlayerColors[i]);
                     break;
                 case 3:
-                    CameraSetup(config.c4, SpawnedPlayers[i]);
+                    var cam3 = CameraSetup(config.c4, SpawnedPlayers[i]);
+                    cam3.SetBorderColor(PlayerColors[i]);
                     break;
                 default:
                     return;
@@ -110,21 +106,37 @@ public class GameManager : MonoBehaviour
         Vector3 pos = level.SpawnPoints[UnusedSpawnPoints[selectedpoint]].transform.position;
         UnusedSpawnPoints.Remove(UnusedSpawnPoints[selectedpoint]);
 
+        //Generate PlayerControllerScript
+        // PlayerController newPlayerController = new PlayerController();
+        // newPlayerController.chosenInput = player;
+        // newPlayerController.playerColor = PlayerColors[(int)player];
+        
         //Instantiate Player
         var newPlayer = Instantiate(PlayerPrefab, pos, quaternion.identity);
-        newPlayer.GetComponent<PlayerController>().chosenInput = player;
+        newPlayer.GetComponent<PlayerController>().SetPlayerInput(player, PlayerColors[(int)player]);
         return newPlayer;
     }
 
-    public void CameraSetup(Vector4 config, GameObject parent)
+    public CameraHandler CameraSetup(Vector4 config, GameObject parent)
     {
         var newCam = Instantiate(CameraPrefab, parent.transform.position, quaternion.identity);
+        
         newCam.transform.SetParent(parent.transform);
+        newCam.transform.localPosition = Vector3.back;
+        
         var CameraRaw = newCam.GetComponent<Camera>();
         CameraRaw.rect = new Rect(config.x, config.y, config.z, config.w);
+
+        return newCam.GetComponent<CameraHandler>();
     }
 
-
+    //OnDestroy
+    public void LevelClear()
+    {
+        UnusedSpawnPoints.Clear();
+        SpawnedPlayers.Clear();
+        level = null;
+    }
 }
 
 public struct CamDim

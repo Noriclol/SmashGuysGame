@@ -3,23 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using Core;
 using Mono.Cecil;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public PlayerChoice chosenInput = PlayerChoice.Player1;
+    
     //FIELDS
+    
+    //components
     public Rigidbody2D rb;
     public CircleCollider2D bot;
     public BoxCollider2D top;
-    
+    public Camera cameraRef;
     public Animator animator;
     public GameInput controls;
     private InputAction move;
     private InputAction jump;
-    
+
+    public SpriteRenderer MiniMapRenderer;
     //Movement
+    
+    public PlayerChoice chosenInput = PlayerChoice.Player1;
     private MovementForceStates moveState;
     private float movementX;
     private float movementMult = 0.5f;
@@ -30,12 +36,20 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 10f;
     public float fallMult = 50f;
     public float fallTopSpeed = 80f;
+    
+    //playerColor
+    public Color playerColor;
+    
+    
+    
+    
     private void Awake()
     {
         controls = Main.Instance.controls;
 
         bot = GetComponent<CircleCollider2D>();
         top = GetComponent<BoxCollider2D>();
+        cameraRef = GetComponentInChildren<Camera>();
     }
     
     
@@ -48,34 +62,43 @@ public class PlayerController : MonoBehaviour
     
     private void OnEnable()
     {
-        switch (chosenInput)
+        //SetPlayerInput();
+    }
+
+    public void SetPlayerInput(PlayerChoice player, Color C)
+    {
+        print((int)player);
+        switch (player)
         {
             case PlayerChoice.Player1:
                 move = controls.PlayerOne.Move;
                 jump = controls.PlayerOne.Jump;
                 break;
+            
             case PlayerChoice.Player2:
                 move = controls.PlayerTwo.Move;
                 jump = controls.PlayerTwo.Jump;
                 break;
+            
             case PlayerChoice.Player3:
                 break;
             case PlayerChoice.Player4:
                 break;
-
         }
-        
+
         move.Enable();
 
-        
+
         jump.Enable();
 
         jump.performed += OnJump;
         //move.performed += OnMove;
         move.started += SetMovementState;
         move.canceled += SetMovementState;
+        this.gameObject.GetComponent<SpriteRenderer>().color = C;
+        MiniMapRenderer.color = C;
     }
-    
+
     private void OnDisable()
     {
         jump.performed -= OnJump;
@@ -86,7 +109,6 @@ public class PlayerController : MonoBehaviour
         jump.Disable();
     }
     
-
 
     //EVENT FUNCTIONS
 

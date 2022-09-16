@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using Core;
 using UnityEngine;
 
+
 public class LevelHandler : MonoBehaviour
 {
     public List<GameObject> SpawnPoints;
-    public void Awake()
+    
+    
+    public void Start()
     {
         Main.Instance.GameManager.level = this;
         for (int i = 0; i < SpawnPoints.Count; i++)
@@ -16,5 +19,9 @@ public class LevelHandler : MonoBehaviour
         }
         Main.Instance.GameManager.PlayerSetup(Main.Instance.GameManager.players);
     }
-    
+
+    public void OnDestroy()
+    {
+        Main.Instance.GameManager.LevelClear();
+    }
 }

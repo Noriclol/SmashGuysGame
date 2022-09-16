@@ -77,6 +77,11 @@ MonoBehaviour:
   UnusedSpawnPoints: 
   SpawnedPlayers: []
   players: 0
+  PlayerColors:
+  - {r: 1, g: 0.97351444, b: 0, a: 1}
+  - {r: 0.24978687, g: 1, b: 0.23113209, a: 1}
+  - {r: 1, g: 0.1273585, b: 0.1273585, a: 1}
+  - {r: 0.16509432, g: 0.47534162, b: 1, a: 1}
 --- !u!114 &2218584014510907223
 MonoBehaviour:
   m_ObjectHideFlags: 0
